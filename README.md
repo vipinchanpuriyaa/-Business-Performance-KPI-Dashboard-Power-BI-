@@ -33,7 +33,7 @@ Executive Dashboard
 
 
 
-![Uploading image.png…]()
+<img width="1374" height="737" alt="image" src="https://github.com/user-attachments/assets/3ca9d7e3-d6ec-4c29-94e8-29f11a24cab3" />
 
 ---
 
