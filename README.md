@@ -28,6 +28,10 @@ Power BI (Star Schema + DAX)
      ↓
 Executive Dashboard
 ```
+# Revenue Optimization Dashboard
+
+
+<img width="1310" height="729" alt="image" src="https://github.com/user-attachments/assets/4cc3798e-00e6-449d-bf0e-c244b2680b38" />
 
 ---
 
