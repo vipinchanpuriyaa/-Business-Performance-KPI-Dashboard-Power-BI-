@@ -101,6 +101,7 @@ GROUP BY c.region;
 ```
 
 🔥 1. Customer Lifetime Value (CLTV)
+
 SELECT 
     customer_id,
     SUM(revenue) AS total_revenue,
@@ -109,7 +110,9 @@ SELECT
 FROM sales
 GROUP BY customer_id
 ORDER BY total_revenue DESC;
+
 🔥 2. Monthly Revenue with Growth % (MoM)
+
 SELECT 
     DATE_FORMAT(transaction_date, '%Y-%m') AS month,
     SUM(revenue) AS monthly_revenue,
@@ -124,7 +127,9 @@ SELECT
 
 FROM sales
 GROUP BY month;
+
 🔥 3. Top Customers by Segment (Window Function)
+
 SELECT *
 FROM (
     SELECT 
@@ -140,14 +145,18 @@ FROM (
     GROUP BY c.segment, s.customer_id
 ) ranked
 WHERE rank_in_segment <= 3;
+
 🔥 4. Cohort Analysis (Customer Retention)
+
 SELECT 
     customer_id,
     MIN(DATE_FORMAT(transaction_date, '%Y-%m')) AS cohort_month,
     DATE_FORMAT(transaction_date, '%Y-%m') AS activity_month
 FROM sales
 GROUP BY customer_id, activity_month;
+
 🔥 5. Revenue Contribution % by Product
+
 SELECT 
     product_id,
     SUM(revenue) AS product_revenue,
@@ -160,8 +169,11 @@ SELECT
 FROM sales
 GROUP BY product_id
 ORDER BY product_revenue DESC;
+
 🔥 6. Query Optimization Example (Important)
+
 -- Create index for performance
+
 CREATE INDEX idx_sales_customer 
 ON sales(customer_id);
 
