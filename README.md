@@ -100,7 +100,73 @@ JOIN customers c ON s.customer_id = c.customer_id
 GROUP BY c.region;
 ```
 
-📂 **Folder**: `/sql/analysis_queries.sql`
+🔥 1. Customer Lifetime Value (CLTV)
+SELECT 
+    customer_id,
+    SUM(revenue) AS total_revenue,
+    COUNT(DISTINCT transaction_id) AS total_orders,
+    AVG(revenue) AS avg_order_value
+FROM sales
+GROUP BY customer_id
+ORDER BY total_revenue DESC;
+🔥 2. Monthly Revenue with Growth % (MoM)
+SELECT 
+    DATE_FORMAT(transaction_date, '%Y-%m') AS month,
+    SUM(revenue) AS monthly_revenue,
+    
+    LAG(SUM(revenue)) OVER (ORDER BY DATE_FORMAT(transaction_date, '%Y-%m')) AS prev_month_revenue,
+    
+    ROUND(
+        (SUM(revenue) - LAG(SUM(revenue)) OVER (ORDER BY DATE_FORMAT(transaction_date, '%Y-%m')))
+        / LAG(SUM(revenue)) OVER (ORDER BY DATE_FORMAT(transaction_date, '%Y-%m')) * 100,
+        2
+    ) AS mom_growth_pct
+
+FROM sales
+GROUP BY month;
+🔥 3. Top Customers by Segment (Window Function)
+SELECT *
+FROM (
+    SELECT 
+        c.segment,
+        s.customer_id,
+        SUM(s.revenue) AS total_revenue,
+        RANK() OVER (
+            PARTITION BY c.segment 
+            ORDER BY SUM(s.revenue) DESC
+        ) AS rank_in_segment
+    FROM sales s
+    JOIN customers c ON s.customer_id = c.customer_id
+    GROUP BY c.segment, s.customer_id
+) ranked
+WHERE rank_in_segment <= 3;
+🔥 4. Cohort Analysis (Customer Retention)
+SELECT 
+    customer_id,
+    MIN(DATE_FORMAT(transaction_date, '%Y-%m')) AS cohort_month,
+    DATE_FORMAT(transaction_date, '%Y-%m') AS activity_month
+FROM sales
+GROUP BY customer_id, activity_month;
+🔥 5. Revenue Contribution % by Product
+SELECT 
+    product_id,
+    SUM(revenue) AS product_revenue,
+    
+    ROUND(
+        SUM(revenue) * 100.0 / SUM(SUM(revenue)) OVER (),
+        2
+    ) AS revenue_contribution_pct
+
+FROM sales
+GROUP BY product_id
+ORDER BY product_revenue DESC;
+🔥 6. Query Optimization Example (Important)
+-- Create index for performance
+CREATE INDEX idx_sales_customer 
+ON sales(customer_id);
+
+CREATE INDEX idx_sales_date 
+ON sales(transaction_date);
 
 ---
 
