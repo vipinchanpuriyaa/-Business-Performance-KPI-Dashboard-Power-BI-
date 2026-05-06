@@ -1,0 +1,77 @@
+🛠️ Python – ETL, EDA & Feature Engineering 
+
+import pandas as pd
+import numpy as np
+
+# -------------------------------
+# Load Data
+# -------------------------------
+def load_data():
+    customers = pd.read_csv('data/customers.csv')
+    products = pd.read_csv('data/products.csv')
+    sales = pd.read_csv('data/sales.csv')
+    payments = pd.read_csv('data/payments.csv')
+    
+    return customers, products, sales, payments
+
+# -------------------------------
+# Data Cleaning
+# -------------------------------
+def clean_sales_data(sales):
+    sales = sales.drop_duplicates()
+    
+    # Handle missing values
+    sales['discount_pct'] = sales['discount_pct'].fillna(0)
+    
+    # Convert date
+    sales['transaction_date'] = pd.to_datetime(sales['transaction_date'])
+    
+    return sales
+
+# -------------------------------
+# Feature Engineering
+# -------------------------------
+def create_features(sales):
+    
+    # Revenue calculation
+    sales['revenue'] = (
+        sales['quantity'] * sales['base_price']
+    ) * (1 - sales['discount_pct'] / 100)
+    
+    # Profit calculation (assume cost_price column exists)
+    sales['profit'] = sales['revenue'] - (sales['quantity'] * sales['cost_price'])
+    
+    # Time features
+    sales['year'] = sales['transaction_date'].dt.year
+    sales['month'] = sales['transaction_date'].dt.month
+    sales['month_name'] = sales['transaction_date'].dt.strftime('%b')
+    
+    return sales
+
+# -------------------------------
+# Data Validation
+# -------------------------------
+def validate_data(sales):
+    assert sales['revenue'].min() >= 0, "Revenue contains negative values!"
+    assert sales['transaction_id'].is_unique, "Duplicate transactions found!"
+    print("✅ Data validation passed")
+
+# -------------------------------
+# Main Pipeline
+# -------------------------------
+def run_pipeline():
+    customers, products, sales, payments = load_data()
+    
+    sales = clean_sales_data(sales)
+    sales = create_features(sales)
+    
+    validate_data(sales)
+    
+    # Export to MySQL-ready CSV
+    sales.to_csv('data/clean_sales.csv', index=False)
+    
+    print("✅ ETL pipeline completed")
+
+# Run
+if __name__ == "__main__":
+    run_pipeline()
