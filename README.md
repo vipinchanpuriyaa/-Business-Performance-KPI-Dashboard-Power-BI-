@@ -101,7 +101,7 @@ GROUP BY c.region;
 ```
 
 🔥 1. Customer Lifetime Value (CLTV)
-
+```sql
 SELECT 
     customer_id,
     SUM(revenue) AS total_revenue,
@@ -112,7 +112,7 @@ GROUP BY customer_id
 ORDER BY total_revenue DESC;
 
 🔥 2. Monthly Revenue with Growth % (MoM)
-
+```sql
 SELECT 
     DATE_FORMAT(transaction_date, '%Y-%m') AS month,
     SUM(revenue) AS monthly_revenue,
@@ -128,7 +128,10 @@ SELECT
 FROM sales
 GROUP BY month;
 
+```sql
 🔥 3. Top Customers by Segment (Window Function)
+
+```sql
 
 SELECT *
 FROM (
@@ -146,8 +149,10 @@ FROM (
 ) ranked
 WHERE rank_in_segment <= 3;
 
-🔥 4. Cohort Analysis (Customer Retention)
+```sql
 
+🔥 4. Cohort Analysis (Customer Retention)
+```sql
 SELECT 
     customer_id,
     MIN(DATE_FORMAT(transaction_date, '%Y-%m')) AS cohort_month,
@@ -156,6 +161,8 @@ FROM sales
 GROUP BY customer_id, activity_month;
 
 🔥 5. Revenue Contribution % by Product
+
+```sql
 
 SELECT 
     product_id,
@@ -170,17 +177,22 @@ FROM sales
 GROUP BY product_id
 ORDER BY product_revenue DESC;
 
+```sql
+
 🔥 6. Query Optimization Example (Important)
 
 -- Create index for performance
-
+```sql
 CREATE INDEX idx_sales_customer 
 ON sales(customer_id);
-
+```sql
 CREATE INDEX idx_sales_date 
 ON sales(transaction_date);
-
+```sql
 ---
+
+
+
 
 ## 📐 Step 3: Power BI – Data Modeling (Star Schema)
 
